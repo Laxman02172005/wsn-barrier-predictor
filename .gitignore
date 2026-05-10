@@ -1,0 +1,31 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Models and Data (Commented out to allow pushing to GitHub for Streamlit Cloud)
+# models/*.pkl
+# models/*.json
+# data/*.csv
+!data/.keep
+!models/.keep
+
+# Logs
+logs/*.log
+!logs/.keep
+
+# Jupyter
+.ipynb_checkpoints

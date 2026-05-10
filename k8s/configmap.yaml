@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wsn-config
+  namespace: wsn-mlops
+data:
+  API_PORT: "8000"
+  STREAMLIT_PORT: "8501"
+  API_URL: "http://wsn-api-service:8000/predict"

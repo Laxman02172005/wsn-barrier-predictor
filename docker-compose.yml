@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  mlflow:
+    image: python:3.10-slim
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/app/mlruns
+    working_dir: /app
+    command: >
+      bash -c "pip install mlflow && mlflow ui --host 0.0.0.0 --port 5000"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./logs:/app/logs
+    environment:
+      - PORT=8000
+    depends_on:
+      - mlflow
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    environment:
+      - API_URL=http://api:8000/predict
+    depends_on:
+      - api

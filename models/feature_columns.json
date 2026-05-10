@@ -1,0 +1,11 @@
+{
+    "features": [
+        "Area",
+        "Sensing Range",
+        "Transmission Range",
+        "Number of Sensor nodes",
+        "Sensor Density",
+        "Coverage Ratio",
+        "Communication Efficiency"
+    ]
+}

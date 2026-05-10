@@ -1,0 +1,29 @@
+# Environments
+.env
+.venv
+env/
+venv/
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Notebooks
+notebooks/
+
+# K8s and CI/CD
+k8s/
+.github/
+
+# Git
+.git/
+.gitignore
+
+# Tests and Markdown
+tests/
+README.md

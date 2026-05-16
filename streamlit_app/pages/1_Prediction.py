@@ -45,55 +45,54 @@ if st.button("Predict Number of Barriers"):
                 
             st.success("Prediction Complete!")
             st.metric(label="Predicted Number of Barriers", value=f"{prediction:.2f}")
+            
+            # Gauge visualization
+            import plotly.graph_objects as go
+            fig = go.Figure(go.Indicator(
+                mode = "gauge+number",
+                value = prediction,
+                domain = {'x': [0, 1], 'y': [0, 1]},
+                title = {'text': "Predicted Barriers"},
+                gauge = {'axis': {'range': [None, max(500, prediction*1.5)]},
+                         'bar': {'color': "darkblue"},
+                         'steps' : [
+                             {'range': [0, 100], 'color': "lightgray"},
+                             {'range': [100, 300], 'color': "gray"}],}
+            ))
+            st.plotly_chart(fig)
+            
+            # SHAP Explainability
+            st.subheader("Model Explainability (SHAP)")
+            try:
+                model, scaler, feature_columns = load_artifacts()
                 
-                # Gauge visualization
-                import plotly.graph_objects as go
-                fig = go.Figure(go.Indicator(
-                    mode = "gauge+number",
-                    value = prediction,
-                    domain = {'x': [0, 1], 'y': [0, 1]},
-                    title = {'text': "Predicted Barriers"},
-                    gauge = {'axis': {'range': [None, max(500, prediction*1.5)]},
-                             'bar': {'color': "darkblue"},
-                             'steps' : [
-                                 {'range': [0, 100], 'color': "lightgray"},
-                                 {'range': [100, 300], 'color': "gray"}],}
-                ))
-                st.plotly_chart(fig)
+                # Create input dataframe
+                input_dict_shap = {
+                    "Area": area,
+                    "Sensing Range": sensing_range,
+                    "Transmission Range": transmission_range,
+                    "Number of Sensor nodes": sensor_nodes
+                }
+                df_input = pd.DataFrame([input_dict_shap])
+                df_input = feature_engineering(df_input)
+                df_input = df_input[feature_columns]
                 
-                # SHAP Explainability
-                st.subheader("Model Explainability (SHAP)")
-                try:
-                    model, scaler, feature_columns = load_artifacts()
-                    
-                    # Create input dataframe
-                    input_dict = {
-                        "Area": area,
-                        "Sensing Range": sensing_range,
-                        "Transmission Range": transmission_range,
-                        "Number of Sensor nodes": sensor_nodes
-                    }
-                    df_input = pd.DataFrame([input_dict])
-                    df_input = feature_engineering(df_input)
-                    df_input = df_input[feature_columns]
-                    
-                    X_scaled = scaler.transform(df_input)
-                    
-                    # Use TreeExplainer for Random Forest/GBM, LinearExplainer for LR
-                    # We will use an explainer suitable for the model type
-                    if hasattr(model, 'feature_importances_'):
-                        explainer = shap.TreeExplainer(model)
-                    else:
-                        explainer = shap.LinearExplainer(model, scaler.transform(pd.DataFrame(columns=feature_columns))) # Requires background data normally
-                    
-                    shap_values = explainer(X_scaled)
-                    
-                    fig, ax = plt.subplots()
-                    shap.waterfall_plot(shap_values[0], show=False)
-                    st.pyplot(fig)
-                    
-                except Exception as e:
-                    st.warning(f"SHAP visualization failed (often requires model to be trained first or specific model types): {e}")
+                X_scaled = scaler.transform(df_input)
+                
+                # Use TreeExplainer for Random Forest/GBM, LinearExplainer for LR
+                if hasattr(model, 'feature_importances_'):
+                    explainer = shap.TreeExplainer(model)
+                else:
+                    explainer = shap.LinearExplainer(model, scaler.transform(pd.DataFrame(columns=feature_columns)))
+                
+                shap_values = explainer(X_scaled)
+                
+                fig, ax = plt.subplots()
+                shap.waterfall_plot(shap_values[0], show=False)
+                st.pyplot(fig)
+                
+            except Exception as e:
+                st.warning(f"SHAP visualization failed: {e}")
 
         except Exception as e:
             st.error(f"An error occurred during prediction: {e}")

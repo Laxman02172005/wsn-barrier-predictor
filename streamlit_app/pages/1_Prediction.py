@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Ensure repo root is in path so 'src' module is importable on Streamlit Cloud
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 import streamlit as st
 import requests
 import pandas as pd
@@ -5,7 +11,6 @@ import shap
 import matplotlib.pyplot as plt
 from src.predict import load_artifacts, predict
 from src.preprocess import feature_engineering
-import os
 
 st.set_page_config(page_title="Prediction & Explainability", layout="wide")
 

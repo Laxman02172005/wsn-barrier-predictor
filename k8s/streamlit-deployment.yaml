@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
       - name: wsn-streamlit
-        image: wsn-streamlit:latest
-        imagePullPolicy: IfNotPresent
+        image: sailaxman01/wsn-streamlit:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8501
         envFrom:

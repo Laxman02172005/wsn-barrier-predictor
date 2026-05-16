@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
       - name: wsn-api
-        image: wsn-api:latest
-        imagePullPolicy: IfNotPresent
+        image: sailaxman01/wsn-api:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8000
         envFrom:
